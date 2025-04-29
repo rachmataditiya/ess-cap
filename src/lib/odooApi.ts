@@ -44,7 +44,7 @@ export class OdooClient {
 
   constructor(defaultDb: string = DEFAULT_DB) {
     //this.apiUrl = `/api/odoo`;  // Use our Express proxy
-    this.apiUrl = 'https://arkana.co.id/jsonrpc';
+    this.apiUrl = 'https://rpc.arkana.my/api/jsonrpc';
     this.defaultDb = defaultDb;
     
     // Try to load session from localStorage on initialization
