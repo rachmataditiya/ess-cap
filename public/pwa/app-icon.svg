@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="100" fill="#0081A7"/>
+  
+  <!-- Decorative elements -->
+  <circle cx="256" cy="256" r="180" fill="#00AFB9" opacity="0.7"/>
+  <circle cx="256" cy="256" r="150" fill="#FDFCDC" opacity="0.9"/>
+  
+  <!-- Main icon elements -->
+  <g transform="translate(128, 128) scale(1)">
+    <!-- Briefcase / Work Icon -->
+    <path d="M220 70H36C25.5066 70 17 78.5066 17 89V197C17 207.493 25.5066 216 36 216H220C230.493 216 239 207.493 239 197V89C239 78.5066 230.493 70 220 70Z" fill="#F07167"/>
+    
+    <!-- Watch Face / Clock -->
+    <circle cx="128" cy="143" r="50" fill="white" stroke="#0081A7" stroke-width="8"/>
+    <line x1="128" y1="143" x2="128" y2="113" stroke="#0081A7" stroke-width="6" stroke-linecap="round"/>
+    <line x1="128" y1="143" x2="148" y2="143" stroke="#0081A7" stroke-width="6" stroke-linecap="round"/>
+    
+    <!-- Document Icon for Employee Records -->
+    <rect x="60" y="100" width="30" height="40" rx="2" fill="white"/>
+    <line x1="65" y1="110" x2="85" y2="110" stroke="#0081A7" stroke-width="2"/>
+    <line x1="65" y1="120" x2="85" y2="120" stroke="#0081A7" stroke-width="2"/>
+    <line x1="65" y1="130" x2="75" y2="130" stroke="#0081A7" stroke-width="2"/>
+    
+    <!-- User Profile Icon -->
+    <circle cx="190" cy="110" r="15" fill="white"/>
+    <path d="M170 140C170 128.954 178.954 120 190 120C201.046 120 210 128.954 210 140V145H170V140Z" fill="white"/>
+  </g>
+</svg>
