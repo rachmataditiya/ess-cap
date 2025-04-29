@@ -2,10 +2,7 @@
 const CACHE_NAME = 'arkana-ess-v1';
 const ASSETS_TO_CACHE = [
   '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/app-icon.svg',
-  '/pwa/app-icon.svg',
+  '/index.html'
 ];
 
 // Installation event: cache assets
@@ -111,8 +108,8 @@ self.addEventListener('push', (event) => {
   const data = event.data.json();
   const options = {
     body: data.body || 'New notification from Arkana ESS',
-    icon: '/pwa/notification-icon-192x192.png',
-    badge: '/pwa/badge-96x96.png',
+    icon: '/icon/app-icon.svg',
+    badge: '/icon/app-icon.svg',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || '/'
