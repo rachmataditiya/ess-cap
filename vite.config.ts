@@ -39,6 +39,11 @@ export default defineConfig({
       }
     })
   ],
+  preview: {
+    host: '0.0.0.0',
+    port: 4173,
+    allowedHosts: ['ess.arkana.my', 'localhost', '127.0.0.1']
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "src"),
