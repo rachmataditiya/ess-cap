@@ -57,14 +57,18 @@ export default function Dashboard() {
   // Calculate total available leave days
   const totalLeaveDays =
     leaveBalances?.reduce(
-      (acc, leave) => acc + (leave.virtual_remaining_leaves || 0),
+      (acc: number, leave: [string, { virtual_remaining_leaves: string }]) => 
+        acc + parseFloat(leave[1].virtual_remaining_leaves || "0"),
       0,
     ) || 0;
 
   // Calculate percentage of leave used
   const totalLeaveAllocation =
-    leaveBalances?.reduce((acc, leave) => acc + (leave.max_leaves || 0), 0) ||
-    1; // Avoid division by zero
+    leaveBalances?.reduce(
+      (acc: number, leave: [string, { max_leaves: string }]) => 
+        acc + parseFloat(leave[1].max_leaves || "0"), 
+      0
+    ) || 1;
   const leavePercentage = Math.round(
     (totalLeaveDays / totalLeaveAllocation) * 100,
   );
@@ -205,7 +209,7 @@ export default function Dashboard() {
               </div>
               <p className="text-xs text-slate-light mt-2">
                 {leaveBalances && leaveBalances.length > 0
-                  ? "Expires in 45 days"
+                  ? `Expires on ${leaveBalances[0][1].closest_allocation_expire}`
                   : "No leave balance available"}
               </p>
             </NeumorphicCard>

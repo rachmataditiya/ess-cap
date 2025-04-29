@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  ess-cap:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ess-cap
+    restart: unless-stopped
+    networks:
+      nginx-proxy:
+        ipv4_address: 172.20.0.17
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  nginx-proxy:
+    external: true 

@@ -151,15 +151,11 @@ export function useLeaveBalance() {
   return useQuery({
     queryKey: ["leaves", "balance"],
     queryFn: async () => {
-      const data = await odooClient.searchRead({
+      const data = await odooClient.call({
         model: "hr.leave.type",
-        domain: [["virtual_remaining_leaves", ">", 0]],
-        fields: [
-          "name",
-          "virtual_remaining_leaves",
-          "max_leaves",
-          "leaves_taken",
-        ],
+        method: "get_days_all_request",
+        args: [],
+        kwargs: {}
       });
       return data;
     },

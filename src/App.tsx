@@ -23,6 +23,7 @@ import AuthPage from "@/pages/auth-page";
 import ProjectUpdates from "@/pages/project-updates";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import ActionButton from "@/components/layout/ActionButton";
+import Header from "@/components/layout/Header";
 import { useOdooAuth } from "@/hooks/useOdoo";
 import ErrorBoundary from "@/components/ui/error-boundary";
 import { LoadingFallback } from "@/components/ui/loading-skeleton";
@@ -73,6 +74,26 @@ function Router() {
   const currentPage = location.slice(1) || "dashboard";
   const { isAuthenticated, isLoading } = useOdooAuth();
 
+  // Get page title based on current route
+  const getPageTitle = () => {
+    const titles: { [key: string]: string } = {
+      dashboard: "Dashboard",
+      leave: "Leave",
+      attendance: "Attendance",
+      "attendance-history": "Attendance History",
+      payslips: "Payslips",
+      "payslips-history": "Payslip History",
+      "leave-history": "Leave History",
+      expenses: "Expenses",
+      "expenses-history": "Expenses History",
+      announcements: "Announcements",
+      calendar: "Calendar",
+      profile: "Profile",
+      "project-updates": "Project Updates",
+    };
+    return titles[currentPage] || "HR Portal";
+  };
+
   // Debug perutean
   console.log(`Router: location=${location}, isAuthenticated=${isAuthenticated}, isLoading=${isLoading}`);
 
@@ -83,29 +104,38 @@ function Router() {
 
   return (
     <div className="relative max-w-md mx-auto min-h-screen">
-      <Switch>
-        <Route path="/auth">
-          {isAuthenticated ? <Redirect to="/" /> : <AuthPage />}
-        </Route>
-        
-        <ProtectedRoute path="/" component={Dashboard} />
-        <ProtectedRoute path="/dashboard" component={Dashboard} />
-        <ProtectedRoute path="/leave" component={Leave} />
-        <ProtectedRoute path="/attendance" component={Attendance} />
-        <ProtectedRoute path="/attendance-history" component={AttendanceHistory} />
-        <ProtectedRoute path="/payslips" component={Payslips} />
-        <ProtectedRoute path="/payslips/:id" component={PayslipDetail} />
-        <ProtectedRoute path="/payslips-history" component={PayslipsHistory} />
-        <ProtectedRoute path="/leave-history" component={LeaveHistory} />
-        <ProtectedRoute path="/expenses" component={Expenses} />
-        <ProtectedRoute path="/expenses/:id" component={ExpenseDetail} />
-        <ProtectedRoute path="/expenses-history" component={ExpensesHistory} />
-        <ProtectedRoute path="/announcements" component={Announcements} />
-        <ProtectedRoute path="/calendar" component={Calendar} />
-        <ProtectedRoute path="/profile" component={Profile} />
-        <ProtectedRoute path="/project-updates" component={ProjectUpdates} />
-        <Route path="/:rest*" component={NotFound} />
-      </Switch>
+      {isAuthenticated && location !== "/auth" && (
+        <Header 
+          title={getPageTitle()} 
+          showBackButton={location !== "/" && location !== "/dashboard"} 
+        />
+      )}
+      
+      <div className="pt-16 pb-20"> {/* Add padding to account for header and bottom nav */}
+        <Switch>
+          <Route path="/auth">
+            {isAuthenticated ? <Redirect to="/" /> : <AuthPage />}
+          </Route>
+          
+          <ProtectedRoute path="/" component={Dashboard} />
+          <ProtectedRoute path="/dashboard" component={Dashboard} />
+          <ProtectedRoute path="/leave" component={Leave} />
+          <ProtectedRoute path="/attendance" component={Attendance} />
+          <ProtectedRoute path="/attendance-history" component={AttendanceHistory} />
+          <ProtectedRoute path="/payslips" component={Payslips} />
+          <ProtectedRoute path="/payslips/:id" component={PayslipDetail} />
+          <ProtectedRoute path="/payslips-history" component={PayslipsHistory} />
+          <ProtectedRoute path="/leave-history" component={LeaveHistory} />
+          <ProtectedRoute path="/expenses" component={Expenses} />
+          <ProtectedRoute path="/expenses/:id" component={ExpenseDetail} />
+          <ProtectedRoute path="/expenses-history" component={ExpensesHistory} />
+          <ProtectedRoute path="/announcements" component={Announcements} />
+          <ProtectedRoute path="/calendar" component={Calendar} />
+          <ProtectedRoute path="/profile" component={Profile} />
+          <ProtectedRoute path="/project-updates" component={ProjectUpdates} />
+          <Route path="/:rest*" component={NotFound} />
+        </Switch>
+      </div>
       
       {isAuthenticated && location !== "/auth" && (
         <ErrorBoundary>

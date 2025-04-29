@@ -2,23 +2,10 @@ import { useState } from "react";
 import { NeumorphicCard } from "@/components/ui/neumorphic";
 import { getInitials } from "@/lib/utils";
 import { useUserProfile, useOdooAuth } from "@/hooks/useOdoo";
-import { PwaInstallButton } from "@/components/ui/pwa-install-button";
 
 export default function Profile() {
   const { data: profile, isLoading } = useUserProfile();
   const { logout, isLogoutPending } = useOdooAuth();
-  
-  // Settings state
-  const [settings, setSettings] = useState({
-    darkMode: false
-  });
-  
-  const toggleSetting = (setting: keyof typeof settings) => {
-    setSettings(prev => ({
-      ...prev,
-      [setting]: !prev[setting]
-    }));
-  };
   
   const handleLogout = () => {
     logout();
@@ -151,64 +138,25 @@ export default function Profile() {
         </NeumorphicCard>
       </div>
       
-      {/* App Settings */}
-      <div>
-        <h3 className="text-navy font-semibold mb-4">App Settings</h3>
-        
-        <NeumorphicCard className="p-4 mb-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <span className="material-icons-round text-slate mr-3">dark_mode</span>
-              <p className="text-navy">Dark Mode</p>
-            </div>
-            <div 
-              className={`w-12 h-6 ${settings.darkMode ? 'bg-teal' : 'bg-soft-gray'} rounded-full relative cursor-pointer transition-colors duration-300`}
-              onClick={() => toggleSetting('darkMode')}
-            >
-              <div 
-                className={`absolute ${settings.darkMode ? 'right-1' : 'left-1'} top-1 bg-white w-4 h-4 rounded-full transition-all duration-300`}
-              ></div>
-            </div>
+      {/* Logout Button */}
+      <button 
+        className="w-full neumorphic rounded-xl p-4 flex items-center justify-center text-red-500 font-medium"
+        onClick={handleLogout}
+        disabled={isLogoutPending}
+      >
+        {isLogoutPending ? (
+          <div className="flex items-center justify-center space-x-1">
+            <div className="loading-wave bg-red-500"></div>
+            <div className="loading-wave bg-red-500"></div>
+            <div className="loading-wave bg-red-500"></div>
           </div>
-        </NeumorphicCard>
-
-        {/* PWA Install Button - only shows if installable */}
-        <NeumorphicCard className="p-4 mb-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <span className="material-icons-round text-slate mr-3">get_app</span>
-              <div>
-                <p className="text-navy">Install App</p>
-                <p className="text-xs text-slate-light">For faster access and offline features</p>
-              </div>
-            </div>
-            <PwaInstallButton 
-              variant="secondary" 
-              size="sm"
-              className="h-9 rounded-xl shadow-sm"
-            />
-          </div>
-        </NeumorphicCard>
-        
-        <button 
-          className="w-full neumorphic rounded-xl p-4 flex items-center justify-center text-red-500 font-medium"
-          onClick={handleLogout}
-          disabled={isLogoutPending}
-        >
-          {isLogoutPending ? (
-            <div className="flex items-center justify-center space-x-1">
-              <div className="loading-wave bg-red-500"></div>
-              <div className="loading-wave bg-red-500"></div>
-              <div className="loading-wave bg-red-500"></div>
-            </div>
-          ) : (
-            <>
-              <span className="material-icons-round mr-2">logout</span>
-              Sign Out
-            </>
-          )}
-        </button>
-      </div>
+        ) : (
+          <>
+            <span className="material-icons-round mr-2">logout</span>
+            Sign Out
+          </>
+        )}
+      </button>
     </div>
   );
 }

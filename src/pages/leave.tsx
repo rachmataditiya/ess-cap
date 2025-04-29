@@ -81,9 +81,12 @@ export default function Leave() {
   const queryClient = useQueryClient();
   
   // Calculate totals
-  const totalLeave = leaveBalances?.reduce((acc, item) => acc + (item.max_leaves || 0), 0) || 0;
-  const usedLeave = leaveBalances?.reduce((acc, item) => acc + (item.leaves_taken || 0), 0) || 0;
-  const remainingLeave = leaveBalances?.reduce((acc, item) => acc + (item.virtual_remaining_leaves || 0), 0) || 0;
+  const totalLeave = leaveBalances?.reduce((acc: number, leave: [string, { max_leaves: string }]) => 
+    acc + parseFloat(leave[1].max_leaves || "0"), 0) || 0;
+  const usedLeave = leaveBalances?.reduce((acc: number, leave: [string, { leaves_taken: string }]) => 
+    acc + parseFloat(leave[1].leaves_taken || "0"), 0) || 0;
+  const remainingLeave = leaveBalances?.reduce((acc: number, leave: [string, { virtual_remaining_leaves: string }]) => 
+    acc + parseFloat(leave[1].virtual_remaining_leaves || "0"), 0) || 0;
   
   // Calculate percentage for radial progress
   const leavePercentage = totalLeave > 0 ? Math.round((remainingLeave / totalLeave) * 100) : 0;
@@ -112,8 +115,8 @@ export default function Leave() {
   // Find annual leave id (Cuti Tahunan)
   useEffect(() => {
     if (leaveBalances) {
-      const annual = leaveBalances.find(l => l.name.toLowerCase().includes('tahunan'));
-      setAnnualLeaveId(annual ? annual.id : null);
+      const annual = leaveBalances.find((l: [string, any, string, number]) => l[0].toLowerCase().includes('tahunan'));
+      setAnnualLeaveId(annual ? annual[3] : null);
     }
   }, [leaveBalances]);
 
@@ -304,23 +307,24 @@ export default function Leave() {
           <div className="flex items-center">
             <span className="material-icons-round text-teal mr-1 text-sm">event</span>
             <span className="text-xs text-slate">
-              Annual: <span className="font-medium">{leaveBalances?.find(l => l.name === 'Cuti Tahunan')?.virtual_remaining_leaves || 0} days</span>
+              Annual: <span className="font-medium">{leaveBalances?.find((l: [string, any, string, number]) => l[0] === 'Cuti Tahunan')?.[1].virtual_remaining_leaves || "0"} days</span>
             </span>
           </div>
           <div className="flex items-center">
             <span className="material-icons-round text-orange-500 mr-1 text-sm">healing</span>
             <span className="text-xs text-slate">
-              Sick: <span className="font-medium">{leaveBalances?.find(l => l.name === 'Sick Time Off')?.virtual_remaining_leaves || 0} days</span>
+              Sick: <span className="font-medium">{leaveBalances?.find((l: [string, any, string, number]) => l[0] === 'Sick Time Off')?.[1].virtual_remaining_leaves || "0"} days</span>
             </span>
           </div>
           <div className="flex items-center">
             <span className="material-icons-round text-purple-500 mr-1 text-sm">stars</span>
             <span className="text-xs text-slate">
-              Special: <span className="font-medium">{leaveBalances?.filter(l => 
-                l.name !== 'Cuti Tahunan' && 
-                l.name !== 'Sick Time Off' && 
-                l.name !== 'Unpaid'
-              ).reduce((acc, curr) => acc + curr.virtual_remaining_leaves, 0)} days</span>
+              Special: <span className="font-medium">{leaveBalances?.filter((l: [string, any, string, number]) => 
+                l[0] !== 'Cuti Tahunan' && 
+                l[0] !== 'Sick Time Off' && 
+                l[0] !== 'Unpaid'
+              ).reduce((acc: number, curr: [string, { virtual_remaining_leaves: string }]) => 
+                acc + parseFloat(curr[1].virtual_remaining_leaves || "0"), 0)} days</span>
             </span>
           </div>
         </div>
@@ -454,14 +458,14 @@ export default function Leave() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {realLeaveTypes.map((type) => (
+                        {realLeaveTypes.map((type: [string, any, string, number]) => (
                           <SelectItem 
-                            key={type.id} 
-                            value={type.id.toString()}
+                            key={type[3]} 
+                            value={type[3].toString()}
                           >
-                            {type.name} {type.virtual_remaining_leaves > 0 ? 
-                              `(${type.virtual_remaining_leaves} days left)` : 
-                              `(${type.max_leaves} days allocation)`}
+                            {type[0]} {parseFloat(type[1].virtual_remaining_leaves) > 0 ? 
+                              `(${type[1].virtual_remaining_leaves} days left)` : 
+                              `(${type[1].max_leaves} days allocation)`}
                           </SelectItem>
                         ))}
                       </SelectContent>

@@ -8,6 +8,7 @@ import { PageSkeleton } from "@/components/ui/loading-skeleton";
 export default function Payslips() {
   const { data: payslips, isLoading } = usePayslips();
   const [selectedPayslip, setSelectedPayslip] = useState<number | null>(null);
+  const [showSalary, setShowSalary] = useState(false);
   const { data: payslipDetails, isLoading: isDetailsLoading } =
     usePayslipDetails(selectedPayslip || 0);
 
@@ -39,6 +40,11 @@ export default function Payslips() {
       </div>
     );
   }
+
+  // Function to mask salary
+  const maskSalary = (amount: number) => {
+    return showSalary ? formatCurrency(amount) : "••••••";
+  };
 
   return (
     <div className="px-5 pb-safe">
@@ -87,7 +93,7 @@ export default function Payslips() {
                   <div>
                     <p className="text-slate-light text-xs mb-1">Net Salary</p>
                     <p className="text-navy font-semibold text-lg">
-                      {formatCurrency(latestPayslip.net_wage || 0)}
+                      {maskSalary(latestPayslip.net_wage || 0)}
                     </p>
                   </div>
                   <div>
@@ -95,7 +101,7 @@ export default function Payslips() {
                       Gross Salary
                     </p>
                     <p className="text-navy font-medium">
-                      {formatCurrency((latestPayslip.net_wage || 0) * 1.2)}{" "}
+                      {maskSalary((latestPayslip.net_wage || 0) * 1.2)}{" "}
                       {/* Simulated gross */}
                     </p>
                   </div>
@@ -128,12 +134,22 @@ export default function Payslips() {
       <div>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-navy font-semibold">Payslip History</h3>
-          <Link
-            to="/payslips-history"
-            className="text-teal text-sm font-medium"
-          >
-            View all
-          </Link>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowSalary(!showSalary)}
+              className="text-teal hover:text-teal-600 transition-colors"
+            >
+              <span className="material-icons-round">
+                {showSalary ? "visibility" : "visibility_off"}
+              </span>
+            </button>
+            <Link
+              to="/payslips-history"
+              className="text-teal text-sm font-medium"
+            >
+              View all
+            </Link>
+          </div>
         </div>
 
         {isLoading ? (
@@ -174,7 +190,7 @@ export default function Payslips() {
                         <span className="material-icons-round text-teal mr-1 text-xs">
                           payments
                         </span>
-                        {formatCurrency(payslip.net_wage || 0)}
+                        {maskSalary(payslip.net_wage || 0)}
                       </span>
                     </div>
                   </div>

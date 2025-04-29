@@ -220,3 +220,22 @@
   border: 1px solid rgba(233, 236, 241, 0.8);
   padding: 10px;
 }
+
+/* Safe area insets for Android */
+@supports (padding: max(0px)) {
+  .header-safe {
+    padding-top: max(env(safe-area-inset-top), 1rem);
+  }
+  
+  .bottom-safe {
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  }
+  
+  .fixed-bottom {
+    bottom: max(env(safe-area-inset-bottom), 0px);
+  }
+  
+  .fixed-top {
+    top: max(env(safe-area-inset-top), 0px);
+  }
+}

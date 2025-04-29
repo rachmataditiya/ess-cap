@@ -30,7 +30,7 @@ export default function BottomNavigation({ activePage }: BottomNavigationProps) 
               key={item.id}
               href={item.path}
               className={cn(
-                "navbar-item flex flex-col items-center rounded-xl p-2 flex-1 transition-all duration-300 ease-in-out",
+                "navbar-item flex flex-col items-center rounded-xl p-2 flex-1",
                 item.id === activePage ? "active" : "text-slate hover:text-navy"
               )}
             >

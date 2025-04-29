@@ -41,7 +41,10 @@ export default function LeaveHistory() {
       {/* Header with back button - Similar to Calendar */}
       <header className="flex items-center mb-6">
         <Link href="/leave" className="mr-4">
-          <button className="w-10 h-10 flex items-center justify-center rounded-full modern-card-inset text-slate">
+          <button 
+            className="w-10 h-10 flex items-center justify-center rounded-full modern-card-inset text-slate"
+            aria-label="Go back to leave page"
+          >
             <ArrowLeftIcon className="w-5 h-5" />
           </button>
         </Link>
@@ -59,6 +62,7 @@ export default function LeaveHistory() {
             className="appearance-none bg-transparent flex-1 text-navy focus:outline-none"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
+            aria-label="Select month to filter leave history"
           >
             {months.map(month => (
               <option key={month.value} value={month.value}>{month.label}</option>
@@ -84,7 +88,7 @@ export default function LeaveHistory() {
           </div>
           <span className="text-white font-bold text-3xl">
             {filteredHistory?.reduce((total: number, record: any) => {
-              return total + (record.number_of_days || 0);
+              return total + (parseFloat(record.number_of_days) || 0);
             }, 0).toFixed(1)} days
           </span>
         </div>
@@ -133,7 +137,7 @@ export default function LeaveHistory() {
                 </div>
                 
                 <p className="text-xs text-slate-light mt-1">
-                  {leave.number_of_days} {leave.number_of_days === 1 ? "day" : "days"}
+                  {parseFloat(leave.number_of_days)} {parseFloat(leave.number_of_days) === 1 ? "day" : "days"}
                 </p>
               </NeumorphicCard>
             ))}
