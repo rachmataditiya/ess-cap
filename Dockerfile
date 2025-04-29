@@ -11,8 +11,11 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Expose port 3000 (Vite's default port)
-EXPOSE 3000
+# Build the application
+RUN npm run build
 
-# Start the development server
+# Expose port 4173 (Vite preview default port)
+EXPOSE 4173
+
+# Start the preview server
 CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0"] 
