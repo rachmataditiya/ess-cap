@@ -12,7 +12,9 @@ services:
         ipv4_address: 172.20.0.17
     environment:
       - NODE_ENV=production
-      - VITE_API_URL=http://172.20.0.17  # Update this with your actual API URL
+      - VITE_API_URL=https://ess.arkana.my
+      - VITE_ODOO_URL=https://arkana.co.id
+      - VITE_ODOO_DB=odoo16_prod_arkana
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
       interval: 30s
