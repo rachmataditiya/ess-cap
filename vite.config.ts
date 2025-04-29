@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['pwa/app-icon.svg', 'pwa/safari-pinned-tab.svg'],
+      includeAssets: ['app-icon.svg', 'safari-pinned-tab.svg'],
       manifest: {
         name: 'Arkana ESS',
         short_name: 'ARK ESS',
@@ -16,17 +16,17 @@ export default defineConfig({
         theme_color: '#ffffff',
         icons: [
           {
-            src: 'pwa/pwa-192x192.png',
+            src: 'pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa/pwa-512x512.png',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: 'pwa/pwa-512x512.png',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
@@ -36,6 +36,9 @@ export default defineConfig({
       workbox: {
         cleanupOutdatedCaches: true,
         sourcemap: true
+      },
+      devOptions: {
+        enabled: true
       }
     })
   ],
