@@ -146,9 +146,6 @@ export default function Dashboard() {
         </div>
 
         <div className="flex space-x-3">
-          <button className="w-10 h-10 rounded-full modern-card-sm flex items-center justify-center text-slate hover:text-navy transition-colors">
-            <span className="material-icons-round">search</span>
-          </button>
           <button className="w-10 h-10 rounded-full modern-card-sm flex items-center justify-center text-slate hover:text-navy transition-colors relative">
             <span className="material-icons-round">notifications</span>
             <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-orange text-white text-xs flex items-center justify-center">

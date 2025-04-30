@@ -57,7 +57,7 @@ export default function Attendance() {
           
           // 1. Parse string waktu dari API
           const now = new Date();
-          const checkInTime = new Date(currentAttendance.check_in);
+          const checkInTime = convertUTCtoJakartaTime(currentAttendance.check_in);
           
           // 2. Hitung selisih waktu dari sejak clock in sampai sekarang
           const diffMs = now.getTime() - checkInTime.getTime();

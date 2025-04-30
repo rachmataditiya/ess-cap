@@ -56,7 +56,7 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
       }`}
     >
       <div className="glass w-full py-2 px-4 border-b border-soft-gray/20 backdrop-blur-lg bg-white/90 shadow-lg">
-        <div className="flex items-center justify-between max-w-screen-lg mx-auto">
+        <div className="flex items-center justify-center max-w-screen-lg mx-auto">
           <div className="flex items-center gap-2">
             {showBackButton && (
               <button
@@ -71,14 +71,6 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
               <span className="material-icons-round text-teal">work</span>
               <h1 className="text-lg font-semibold text-navy">{title}</h1>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button 
-              className="w-8 h-8 flex items-center justify-center rounded-full text-slate hover:text-navy hover:bg-soft-gray/20"
-              aria-label="Notifications"
-            >
-              <span className="material-icons-round">notifications</span>
-            </button>
           </div>
         </div>
       </div>
