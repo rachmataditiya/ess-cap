@@ -8,12 +8,12 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['app-icon.svg', 'safari-pinned-tab.svg'],
+      includeAssets: ['app-icon.svg', 'safari-pinned-tab.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
         name: 'Arkana ESS',
         short_name: 'ARK ESS',
-        description: 'Arkana Employee Self Service Application',
-        theme_color: '#ffffff',
+        description: 'Employee Self Service App for Arkana Digital Solutions',
+        theme_color: '#0081A7',
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/',
@@ -36,12 +36,6 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
-          },
-          {
-            src: 'app-icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
-            purpose: 'any'
           }
         ],
         screenshots: [
@@ -56,17 +50,46 @@ export default defineConfig({
       workbox: {
         cleanupOutdatedCaches: true,
         sourcemap: true,
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}']
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          },
+          {
+            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              }
+            }
+          }
+        ]
       },
       devOptions: {
-        enabled: true
+        enabled: true,
+        type: 'module',
+        navigateFallback: 'index.html'
       },
-      strategies: 'injectManifest',
+      strategies: 'generateSW',
       srcDir: 'public',
-      filename: 'sw.js',
-      injectManifest: {
-        injectionPoint: 'self.__WB_MANIFEST'
-      }
+      filename: 'sw.js'
     })
   ],
   preview: {

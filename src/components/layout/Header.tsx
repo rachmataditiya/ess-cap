@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { StatusBar, Style } from "@capacitor/status-bar";
+import { Capacitor } from "@capacitor/core";
 
 interface HeaderProps {
   title: string;
@@ -23,14 +24,16 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
   }, []);
 
   useEffect(() => {
-    // Set up Capacitor header
+    // Set up Capacitor header only on native platforms
     const setupHeader = async () => {
-      try {
-        await StatusBar.setStyle({ style: Style.Dark });
-        await StatusBar.show();
-        await StatusBar.setBackgroundColor({ color: '#ffffff' });
-      } catch (error) {
-        console.error('Error setting up header:', error);
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await StatusBar.setStyle({ style: Style.Dark });
+          await StatusBar.show();
+          await StatusBar.setBackgroundColor({ color: '#ffffff' });
+        } catch (error) {
+          console.error('Error setting up header:', error);
+        }
       }
     };
 
