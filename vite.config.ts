@@ -73,8 +73,12 @@ export default defineConfig({
         cleanupOutdatedCaches: true,
         sourcemap: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
-        navigateFallback: 'offline.html',
-        navigateFallbackDenylist: [/^\/api\//],
+        navigateFallback: 'index.html',
+        navigateFallbackDenylist: [
+          /^\/api\//,
+          /^\/auth\//,
+          /^\/odoo\//
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
@@ -105,11 +109,11 @@ export default defineConfig({
             }
           },
           {
-            urlPattern: /^https:\/\/(.*)\.supabase\.co\/rest\/v1\/.*/i,
+            urlPattern: /^https:\/\/odoo\.arkana\.my\/.*/i,
             handler: 'NetworkFirst',
             options: {
-              cacheName: 'supabase-api-cache',
-              networkTimeoutSeconds: 5,
+              cacheName: 'odoo-api-cache',
+              networkTimeoutSeconds: 10,
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 60 * 60 * 24
@@ -122,7 +126,7 @@ export default defineConfig({
         ]
       },
       devOptions: {
-        enabled: true,
+        enabled: process.env.NODE_ENV === 'development',
         type: 'module',
         navigateFallback: 'index.html',
         navigateFallbackDenylist: [/^\/api\//]

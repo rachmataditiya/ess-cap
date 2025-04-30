@@ -11,7 +11,9 @@ import { useOdooAuth } from "@/hooks/useOdoo";
 import { LoadingFallback } from "@/components/ui/loading-skeleton";
 
 const loginSchema = z.object({
-  username: z.string().min(1, { message: "Username harus diisi" }),
+  username: z.string()
+    .min(1, { message: "Email harus diisi" })
+    .email({ message: "Format email tidak valid" }),
   password: z.string().min(1, { message: "Password harus diisi" }),
 });
 
@@ -57,7 +59,7 @@ export default function AuthPage() {
         onError: (error: any) => {
           toast({
             title: "Login gagal",
-            description: error.message || "Pastikan username dan password benar",
+            description: error.message || "Pastikan email dan password benar",
             variant: "destructive",
           });
           setIsLoggingIn(false);
@@ -102,14 +104,14 @@ export default function AuthPage() {
                   name="username"
                   render={({ field }) => (
                     <FormItem className="mb-3">
-                      <FormLabel className="text-navy text-sm font-medium">Username</FormLabel>
+                      <FormLabel className="text-navy text-sm font-medium">Email</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-3 text-slate-light">
                             <span className="material-icons-round text-base">person</span>
                           </span>
                           <Input 
-                            placeholder="Masukkan username anda" 
+                            placeholder="Masukkan email anda" 
                             {...field} 
                             className="h-10 pl-10 bg-gray-50 focus:ring-teal focus:border-teal rounded-xl text-sm"
                             autoComplete="username"
