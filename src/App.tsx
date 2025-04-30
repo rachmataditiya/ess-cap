@@ -114,7 +114,7 @@ function Router() {
         />
       )}
       
-      <div className="pt-16 pb-20"> {/* Add padding to account for header and bottom nav */}
+      <div className="pt-16 pb-20 overflow-y-auto h-[calc(100vh-5rem)]"> {/* Add overflow-y-auto and fixed height */}
         <Switch>
           <Route path="/auth">
             {isAuthenticated ? <Redirect to="/" /> : <AuthPage />}
@@ -168,7 +168,15 @@ function App() {
       <TooltipProvider>
         <div className="app-container bg-soft-gradient min-h-screen">
           <Toaster />
-          <PullToRefresh onRefresh={handleRefresh}>
+          <PullToRefresh
+            onRefresh={handleRefresh}
+            className="h-screen"
+            style={{
+              height: '100vh',
+              overflow: 'auto',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
             <Router />
           </PullToRefresh>
         </div>
