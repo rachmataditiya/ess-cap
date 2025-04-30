@@ -21,7 +21,6 @@ export default function AuthPage() {
   const { toast } = useToast();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   
-  // Initialize form (always initialize hooks at the top level)
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -30,12 +29,10 @@ export default function AuthPage() {
     },
   });
 
-  // Show loading state while authentication is being checked
   if (isLoading) {
     return <LoadingFallback />;
   }
 
-  // Redirect to home if already logged in
   if (isAuthenticated) {
     navigate("/");
     return null;
@@ -77,46 +74,45 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row overflow-hidden">
-      {/* Form Column */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 md:px-12 bg-white relative">
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-40 h-40 bg-teal-50 rounded-br-full opacity-70"></div>
-        <div className="absolute bottom-0 right-0 w-40 h-40 bg-teal-50 rounded-tl-full opacity-70"></div>
-        
-        <div className="max-w-lg mx-auto w-full z-10">
-          <div className="text-center mb-10">
-            <div className="relative w-24 h-24 mx-auto mb-6">
+    <div className="h-screen flex flex-col bg-soft-gradient">
+      {/* Header */}
+      <div className="flex-1 flex flex-col justify-center px-6">
+        <div className="max-w-md mx-auto w-full">
+          {/* Logo and Title */}
+          <div className="text-center mb-6">
+            <div className="relative w-16 h-16 mx-auto mb-3">
               <div className="absolute inset-0 bg-gradient-to-br from-teal to-teal-600 rounded-2xl shadow-lg transform rotate-12"></div>
               <div className="absolute inset-1 bg-white rounded-xl flex items-center justify-center transform -rotate-12">
-                <span className="material-icons-round text-teal text-4xl">person</span>
+                <span className="material-icons-round text-teal text-2xl">work</span>
               </div>
             </div>
             
-            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal to-teal-600">HR Portal</h1>
-            <p className="text-slate-light mt-2 text-lg">
+            <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal to-teal-600">HR Portal</h1>
+            <p className="text-slate-light mt-1 text-xs">
               Employee Self Service
             </p>
           </div>
 
+          {/* Login Form */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+              <div className="bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-sm border border-gray-100">
                 <FormField
                   control={form.control}
                   name="username"
                   render={({ field }) => (
-                    <FormItem className="mb-5">
-                      <FormLabel className="text-navy font-medium">Username</FormLabel>
+                    <FormItem className="mb-3">
+                      <FormLabel className="text-navy text-sm font-medium">Username</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-3 text-slate-light">
-                            <span className="material-icons-round">person</span>
+                            <span className="material-icons-round text-base">person</span>
                           </span>
                           <Input 
                             placeholder="Masukkan username anda" 
                             {...field} 
-                            className="h-12 pl-10 bg-gray-50 focus:ring-teal focus:border-teal rounded-xl"
+                            className="h-10 pl-10 bg-gray-50 focus:ring-teal focus:border-teal rounded-xl text-sm"
+                            autoComplete="username"
                           />
                         </div>
                       </FormControl>
@@ -129,17 +125,18 @@ export default function AuthPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-navy font-medium">Password</FormLabel>
+                      <FormLabel className="text-navy text-sm font-medium">Password</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <span className="absolute left-3 top-3 text-slate-light">
-                            <span className="material-icons-round">lock</span>
+                            <span className="material-icons-round text-base">lock</span>
                           </span>
                           <Input 
                             type="password" 
                             placeholder="Masukkan password anda" 
                             {...field} 
-                            className="h-12 pl-10 bg-gray-50 focus:ring-teal focus:border-teal rounded-xl"
+                            className="h-10 pl-10 bg-gray-50 focus:ring-teal focus:border-teal rounded-xl text-sm"
+                            autoComplete="current-password"
                           />
                         </div>
                       </FormControl>
@@ -151,16 +148,16 @@ export default function AuthPage() {
               
               <Button 
                 type="submit" 
-                className="w-full h-14 bg-gradient-to-r from-teal to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold text-lg rounded-xl shadow-md hover:shadow-lg transform transition-all duration-300 hover:-translate-y-1"
+                className="w-full h-11 bg-gradient-to-r from-teal to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-medium text-sm rounded-xl shadow-sm"
                 disabled={isLoggingIn || isLoginPending}
               >
                 {(isLoggingIn || isLoginPending) ? 
                   <span className="flex items-center justify-center">
-                    <span className="material-icons-round animate-spin mr-2">refresh</span>
+                    <span className="material-icons-round animate-spin mr-2 text-base">refresh</span>
                     Sedang masuk...
                   </span> : 
                   <span className="flex items-center justify-center">
-                    <span className="material-icons-round mr-2">login</span>
+                    <span className="material-icons-round mr-2 text-base">login</span>
                     Masuk
                   </span>
                 }
@@ -168,56 +165,9 @@ export default function AuthPage() {
             </form>
           </Form>
 
-          <div className="mt-10 text-center text-slate-light">
+          {/* Footer */}
+          <div className="mt-6 text-center text-slate-light text-xs">
             <p>© 2025 Arkana Digital Indonesia</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Hero Column */}
-      <div className="hidden md:flex flex-1 bg-gradient-to-br from-teal-600 to-teal-900 text-white relative overflow-hidden">
-        {/* Abstract patterns */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply opacity-20 -translate-y-1/4 translate-x-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-400 rounded-full mix-blend-multiply opacity-20 translate-y-1/4 -translate-x-1/4"></div>
-        
-        <div className="relative z-10 flex flex-col justify-center items-start h-full p-16">
-          <div className="max-w-md">
-            <h2 className="text-4xl font-bold mb-6">Selamat Datang!</h2>
-            <p className="text-lg mb-10 text-teal-100">
-              Akses informasi HR, ajukan cuti, lihat slip gaji, dan layanan lainnya dalam satu portal.
-            </p>
-            
-            <div className="space-y-6">
-              <div className="flex items-start group hover:translate-x-1 transition-transform duration-300">
-                <div className="w-12 h-12 rounded-xl bg-white bg-opacity-20 flex items-center justify-center mr-5 shadow-lg">
-                  <span className="material-icons-round text-white">event_note</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-xl">Kelola Cuti</h3>
-                  <p className="text-teal-100 mt-1">Ajukan dan pantau semua jenis cuti dengan mudah</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start group hover:translate-x-1 transition-transform duration-300">
-                <div className="w-12 h-12 rounded-xl bg-white bg-opacity-20 flex items-center justify-center mr-5 shadow-lg">
-                  <span className="material-icons-round text-white">punch_clock</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-xl">Absensi</h3>
-                  <p className="text-teal-100 mt-1">Catat kehadiran dan pantau jam kerja Anda</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start group hover:translate-x-1 transition-transform duration-300">
-                <div className="w-12 h-12 rounded-xl bg-white bg-opacity-20 flex items-center justify-center mr-5 shadow-lg">
-                  <span className="material-icons-round text-white">receipt_long</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-xl">Dokumen Payroll</h3>
-                  <p className="text-teal-100 mt-1">Akses slip gaji dan unduh dokumen pajak</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
