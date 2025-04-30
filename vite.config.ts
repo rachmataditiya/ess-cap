@@ -14,30 +14,42 @@ export default defineConfig({
         short_name: 'ARK ESS',
         description: 'Arkana Employee Self Service Application',
         theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        start_url: '/',
+        orientation: 'portrait',
         icons: [
           {
-            src: '/pwa-192x192.png',
+            src: 'pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/pwa-512x512.png',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/pwa-512x512.png',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
           },
           {
-            src: '/pwa-192x192.png',
-            sizes: '192x192',
+            src: 'icons/app-icon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+            purpose: 'any'
+          }
+        ],
+        screenshots: [
+          {
+            src: 'screenshot-dashboard.png',
+            sizes: '1280x720',
             type: 'image/png',
-            purpose: 'maskable'
+            label: 'Dashboard Screenshot'
           }
         ]
       },
@@ -47,7 +59,10 @@ export default defineConfig({
       },
       devOptions: {
         enabled: true
-      }
+      },
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js'
     })
   ],
   preview: {

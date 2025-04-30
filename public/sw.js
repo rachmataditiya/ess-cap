@@ -2,7 +2,13 @@
 const CACHE_NAME = 'arkana-ess-v1';
 const ASSETS_TO_CACHE = [
   '/',
-  '/index.html'
+  '/index.html',
+  '/app-icon.svg',
+  '/pwa-192x192.png',
+  '/pwa-512x512.png',
+  '/safari-pinned-tab.svg',
+  '/manifest.json',
+  'https://fonts.googleapis.com/icon?family=Material+Icons+Round'
 ];
 
 // Installation event: cache assets
@@ -93,7 +99,10 @@ self.addEventListener('fetch', (event) => {
           })
           .catch(error => {
             console.error('Fetch failed:', error);
-            // You could return a custom offline page here
+            // Return offline page for navigation requests
+            if (event.request.mode === 'navigate') {
+              return caches.match('/index.html');
+            }
           });
       })
   );
@@ -108,8 +117,8 @@ self.addEventListener('push', (event) => {
   const data = event.data.json();
   const options = {
     body: data.body || 'New notification from Arkana ESS',
-    icon: '/icon/app-icon.svg',
-    badge: '/icon/app-icon.svg',
+    icon: '/pwa-192x192.png',
+    badge: '/pwa-192x192.png',
     vibrate: [100, 50, 100],
     data: {
       url: data.url || '/'
