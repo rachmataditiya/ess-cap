@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import odooClient from "@/lib/odooApi";
+import { format } from "date-fns";
 
 // Authentication hook
 export function useOdooAuth() {
@@ -1391,3 +1392,43 @@ export const useDeleteExpense = () => {
     },
   });
 };
+
+export interface ResourceEvent {
+  id: number;
+  name: string;
+  start_date: string;
+  end_date: string;
+  employee_id: [number, string];
+  event_type: string;
+}
+
+export function useResources() {
+  const { data: events, isLoading } = useQuery({
+    queryKey: ["resources", "events"],
+    queryFn: async () => {
+      const events = await odooClient.searchRead({
+        model: "hr.leave",
+        domain: [
+          ["state", "in", ["validate", "validate1"]],
+          ["date_from", "<=", format(new Date(), "yyyy-MM-dd")],
+          ["date_to", ">=", format(new Date(), "yyyy-MM-dd")],
+        ],
+        fields: ["name", "date_from", "date_to", "employee_id", "holiday_status_id"],
+      });
+
+      return events.map((event: any) => ({
+        id: event.id,
+        name: event.name,
+        start_date: event.date_from,
+        end_date: event.date_to,
+        employee_id: event.employee_id,
+        event_type: "leave",
+      }));
+    },
+  });
+
+  return {
+    events,
+    isLoading,
+  };
+}

@@ -21,6 +21,7 @@ import Calendar from "@/pages/calendar";
 import Profile from "@/pages/profile";
 import AuthPage from "@/pages/auth-page";
 import ProjectUpdates from "@/pages/project-updates";
+import Resources from "@/pages/resources";
 import BottomNavigation from "@/components/layout/BottomNavigation";
 import ActionButton from "@/components/layout/ActionButton";
 import Header from "@/components/layout/Header";
@@ -28,6 +29,7 @@ import { useOdooAuth } from "@/hooks/useOdoo";
 import ErrorBoundary from "@/components/ui/error-boundary";
 import { LoadingFallback } from "@/components/ui/loading-skeleton";
 import ExpenseDetail from "@/pages/expense-detail";
+import PullToRefresh from "react-pull-to-refresh";
 
 // Komponen untuk melindungi rute yang membutuhkan autentikasi
 function ProtectedRoute(props: { component: React.ComponentType; path: string }) {
@@ -90,6 +92,7 @@ function Router() {
       calendar: "Calendar",
       profile: "Profile",
       "project-updates": "Project Updates",
+      resources: "Resources",
     };
     return titles[currentPage] || "HR Portal";
   };
@@ -133,6 +136,7 @@ function Router() {
           <ProtectedRoute path="/calendar" component={Calendar} />
           <ProtectedRoute path="/profile" component={Profile} />
           <ProtectedRoute path="/project-updates" component={ProjectUpdates} />
+          <ProtectedRoute path="/resources" component={Resources} />
           <Route path="/:rest*" component={NotFound} />
         </Switch>
       </div>
@@ -153,12 +157,20 @@ function App() {
   // Initialize StatusBar
   useStatusBar();
 
+  const handleRefresh = async () => {
+    // Invalidate all queries to force a refresh
+    await queryClient.invalidateQueries();
+    return Promise.resolve();
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="app-container bg-soft-gradient min-h-screen">
           <Toaster />
-          <Router />
+          <PullToRefresh onRefresh={handleRefresh}>
+            <Router />
+          </PullToRefresh>
         </div>
       </TooltipProvider>
     </QueryClientProvider>

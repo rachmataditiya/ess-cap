@@ -236,12 +236,14 @@ export default function Dashboard() {
             </div>
           </NeumorphicCard>
           
-          <NeumorphicCard className="p-4 text-center cursor-pointer hover:shadow-lg transition-shadow">
-            <div className="flex flex-col items-center">
-              <UsersIcon className="w-6 h-6 text-teal mb-2" />
-              <span className="text-sm font-medium text-navy">Resources</span>
-            </div>
-          </NeumorphicCard>
+          <Link to="/resources">
+            <NeumorphicCard className="p-4 text-center cursor-pointer hover:shadow-lg transition-shadow">
+              <div className="flex flex-col items-center">
+                <UsersIcon className="w-6 h-6 text-teal mb-2" />
+                <span className="text-sm font-medium text-navy">Resources</span>
+              </div>
+            </NeumorphicCard>
+          </Link>
         </div>
       </div>
 

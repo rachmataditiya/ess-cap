@@ -16,7 +16,7 @@ const navItems: NavItem[] = [
   { id: "dashboard", label: "Home", icon: "dashboard", path: "/dashboard" },
   { id: "leave", label: "Leave", icon: "event_note", path: "/leave" },
   { id: "attendance", label: "Time", icon: "access_time", path: "/attendance" },
-  { id: "payslips", label: "Payslips", icon: "description", path: "/payslips" },
+  { id: "resources", label: "Resources", icon: "people", path: "/resources" },
   { id: "profile", label: "Profile", icon: "person", path: "/profile" },
 ];
 
