@@ -62,11 +62,9 @@ export default function Attendance() {
           // 2. Hitung selisih waktu dari sejak clock in sampai sekarang
           const diffMs = now.getTime() - checkInTime.getTime();
           
-          // 3. Konversi milidetik ke format jam:menit dan kurangi 7 jam
+          // 3. Konversi milidetik ke format jam:menit
           const totalSeconds = Math.floor(diffMs / 1000);
-          let hours = Math.floor(totalSeconds / 3600);
-          // Kurangi 7 jam dari tampilan untuk kompensasi perbedaan timezone
-          hours = hours >= 7 ? hours - 7 : hours; // Pastikan tidak negative
+          const hours = Math.floor(totalSeconds / 3600);
           const minutes = Math.floor((totalSeconds % 3600) / 60);
           const seconds = totalSeconds % 60;
           
@@ -96,12 +94,8 @@ export default function Attendance() {
             // Pastikan keduanya ada dan ini adalah data dari clock in & out hari ini
             if (checkInTime && checkOutTime) {
               const diffMs = checkOutTime.getTime() - checkInTime.getTime();
-              let hours = Math.floor(diffMs / (1000 * 60 * 60));
-              // Kurangi 7 jam dari tampilan untuk kompensasi perbedaan timezone
-              hours = hours >= 7 ? hours - 7 : hours; // Pastikan tidak negative
-              const minutes = Math.floor(
-                (diffMs % (1000 * 60 * 60)) / (1000 * 60),
-              );
+              const hours = Math.floor(diffMs / (1000 * 60 * 60));
+              const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
               setElapsedTime(
                 `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`,
               );
@@ -462,7 +456,11 @@ export default function Attendance() {
                       timer
                     </span>
                     {record.worked_hours
-                      ? `${Number(record.worked_hours).toFixed(2)}h`
+                      ? (() => {
+                          const hours = Math.floor(record.worked_hours);
+                          const minutes = Math.round((record.worked_hours - hours) * 60);
+                          return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+                        })()
                       : calculateDuration(
                           new Date(record.check_in),
                           new Date(record.check_out),

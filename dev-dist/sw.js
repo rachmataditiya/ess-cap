@@ -81,13 +81,13 @@ define(['./workbox-47da91e0'], (function (workbox) { 'use strict';
     "url": "registerSW.js",
     "revision": "3ca0b8505b4bec776b69afdba2768812"
   }, {
-    "url": "offline.html",
-    "revision": "0.r08pkdl4iq8"
+    "url": "index.html",
+    "revision": "0.a26pr5032m8"
   }], {});
   workbox.cleanupOutdatedCaches();
-  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("offline.html"), {
+  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
     allowlist: [/^\/$/],
-    denylist: [/^\/api\//]
+    denylist: [/^\/api\//, /^\/auth\//, /^\/odoo\//]
   }));
   workbox.registerRoute(/^https:\/\/fonts\.googleapis\.com\/.*/i, new workbox.CacheFirst({
     "cacheName": "google-fonts-cache",
@@ -107,9 +107,9 @@ define(['./workbox-47da91e0'], (function (workbox) { 'use strict';
       statuses: [0, 200]
     })]
   }), 'GET');
-  workbox.registerRoute(/^https:\/\/(.*)\.supabase\.co\/rest\/v1\/.*/i, new workbox.NetworkFirst({
-    "cacheName": "supabase-api-cache",
-    "networkTimeoutSeconds": 5,
+  workbox.registerRoute(/^https:\/\/odoo\.arkana\.my\/.*/i, new workbox.NetworkFirst({
+    "cacheName": "odoo-api-cache",
+    "networkTimeoutSeconds": 10,
     plugins: [new workbox.ExpirationPlugin({
       maxEntries: 50,
       maxAgeSeconds: 86400

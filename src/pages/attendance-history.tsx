@@ -199,7 +199,11 @@ export default function AttendanceHistory() {
                       timer
                     </span>
                     {record.worked_hours
-                      ? `${Number(record.worked_hours).toFixed(2)}h`
+                      ? (() => {
+                          const hours = Math.floor(record.worked_hours);
+                          const minutes = Math.round((record.worked_hours - hours) * 60);
+                          return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+                        })()
                       : calculateDuration(
                           new Date(record.check_in),
                           new Date(record.check_out)
