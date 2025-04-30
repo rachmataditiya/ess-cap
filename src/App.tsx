@@ -29,7 +29,6 @@ import { useOdooAuth } from "@/hooks/useOdoo";
 import ErrorBoundary from "@/components/ui/error-boundary";
 import { LoadingFallback } from "@/components/ui/loading-skeleton";
 import ExpenseDetail from "@/pages/expense-detail";
-import PullToRefresh from "react-pull-to-refresh";
 
 // Komponen untuk melindungi rute yang membutuhkan autentikasi
 function ProtectedRoute(props: { component: React.ComponentType; path: string }) {
@@ -100,7 +99,6 @@ function Router() {
   // Debug perutean
   console.log(`Router: location=${location}, isAuthenticated=${isAuthenticated}, isLoading=${isLoading}`);
 
-  // Jika masih loading, tampilkan indikator loading
   if (isLoading) {
     return <LoadingFallback />;
   }
@@ -114,7 +112,7 @@ function Router() {
         />
       )}
       
-      <div className="pt-16 pb-20 overflow-y-auto h-[calc(100vh-5rem)]"> {/* Add overflow-y-auto and fixed height */}
+      <main className="pt-16 pb-20 min-h-[calc(100vh-5rem)]">
         <Switch>
           <Route path="/auth">
             {isAuthenticated ? <Redirect to="/" /> : <AuthPage />}
@@ -139,7 +137,7 @@ function Router() {
           <ProtectedRoute path="/resources" component={Resources} />
           <Route path="/:rest*" component={NotFound} />
         </Switch>
-      </div>
+      </main>
       
       {isAuthenticated && location !== "/auth" && (
         <ErrorBoundary>
@@ -157,28 +155,12 @@ function App() {
   // Initialize StatusBar
   useStatusBar();
 
-  const handleRefresh = async () => {
-    // Invalidate all queries to force a refresh
-    await queryClient.invalidateQueries();
-    return Promise.resolve();
-  };
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="app-container bg-soft-gradient min-h-screen">
           <Toaster />
-          <PullToRefresh
-            onRefresh={handleRefresh}
-            className="h-screen"
-            style={{
-              height: '100vh',
-              overflow: 'auto',
-              WebkitOverflowScrolling: 'touch'
-            }}
-          >
-            <Router />
-          </PullToRefresh>
+          <Router />
         </div>
       </TooltipProvider>
     </QueryClientProvider>

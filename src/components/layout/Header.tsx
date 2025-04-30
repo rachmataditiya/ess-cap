@@ -19,7 +19,10 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
       setIsVisible(scrollPosition > 50);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    // Add initial check
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -45,9 +48,11 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 ${
-        isVisible ? "opacity-100" : "opacity-0"
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 transform ${
+        isVisible 
+          ? 'opacity-100 translate-y-0' 
+          : 'opacity-0 -translate-y-full pointer-events-none'
       }`}
     >
       <div className="glass w-full py-2 px-4 border-b border-soft-gray/20 backdrop-blur-lg bg-white/90 shadow-lg">
@@ -57,6 +62,7 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
               <button
                 onClick={handleBack}
                 className="w-8 h-8 flex items-center justify-center rounded-full text-slate hover:text-navy hover:bg-soft-gray/20"
+                aria-label="Go back"
               >
                 <span className="material-icons-round">arrow_back</span>
               </button>
@@ -67,7 +73,10 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button className="w-8 h-8 flex items-center justify-center rounded-full text-slate hover:text-navy hover:bg-soft-gray/20">
+            <button 
+              className="w-8 h-8 flex items-center justify-center rounded-full text-slate hover:text-navy hover:bg-soft-gray/20"
+              aria-label="Notifications"
+            >
               <span className="material-icons-round">notifications</span>
             </button>
           </div>
