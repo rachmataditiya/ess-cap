@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { useLeaveBalance, useLeaveRequests, useCreateLeaveRequest } from "@/hooks/useOdoo";
+import { useLeaveBalance, useLeaveRequests, useCreateLeaveRequest, useLeaveType } from "@/hooks/useOdoo";
 import { formatDate } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -74,6 +74,7 @@ export default function Leave() {
   const [selectedLeaveType, setSelectedLeaveType] = useState<number | null>(null);
   const [annualLeaveId, setAnnualLeaveId] = useState<number | null>(null);
   const { data: leaveBalances, isLoading: isBalanceLoading } = useLeaveBalance();
+  const { data: leaveTypes, isLoading: isLeaveTypeLoading } = useLeaveType();
   const { data: upcomingLeaves, isLoading: isLeavesLoading } = useLeaveRequests('validate');
   const { data: pendingLeaves, isLoading: isPendingLoading } = useLeaveRequests('confirm');
   const createLeaveMutation = useCreateLeaveRequest();
@@ -114,11 +115,11 @@ export default function Leave() {
 
   // Find annual leave id (Cuti Tahunan)
   useEffect(() => {
-    if (leaveBalances) {
-      const annual = leaveBalances.find((l: [string, any, string, number]) => l[0].toLowerCase().includes('tahunan'));
-      setAnnualLeaveId(annual ? annual[3] : null);
+    if (leaveTypes) {
+      const annual = leaveTypes.find((l: any) => l?.name?.toLowerCase()?.includes('tahunan'));
+      setAnnualLeaveId(annual ? annual.id : null);
     }
-  }, [leaveBalances]);
+  }, [leaveTypes]);
 
   // Helper: is selected leave annual?
   const isAnnualLeave = annualLeaveId && form.watch('holiday_status_id') === annualLeaveId;
@@ -215,7 +216,7 @@ export default function Leave() {
   };
 
   // Extract real leave types from Odoo data
-  const realLeaveTypes = leaveBalances || [];
+  const realLeaveTypes = leaveTypes?.filter((type: any) => type?.name) || [];
 
   // Show loading skeleton if data is loading
   if (isBalanceLoading && isLeavesLoading) {
@@ -223,7 +224,7 @@ export default function Leave() {
   }
 
   // Show error message if data failed to load
-  if (!leaveBalances && !isBalanceLoading) {
+  if (!leaveTypes && !isLeaveTypeLoading) {
     return (
       <div className="flex flex-col items-center justify-center text-center p-6 min-h-[50vh]">
         <div className="text-red-500 mb-4 text-4xl">!</div>
@@ -307,24 +308,31 @@ export default function Leave() {
           <div className="flex items-center">
             <span className="material-icons-round text-teal mr-1 text-sm">event</span>
             <span className="text-xs text-slate">
-              Annual: <span className="font-medium">{leaveBalances?.find((l: [string, any, string, number]) => l[0] === 'Cuti Tahunan')?.[1].virtual_remaining_leaves || "0"} days</span>
+              Annual: <span className="font-medium">
+                {leaveTypes?.find((l: any) => l?.name?.toLowerCase()?.includes('tahunan'))?.virtual_remaining_leaves || "0"} days
+              </span>
             </span>
           </div>
           <div className="flex items-center">
             <span className="material-icons-round text-orange-500 mr-1 text-sm">healing</span>
             <span className="text-xs text-slate">
-              Sick: <span className="font-medium">{leaveBalances?.find((l: [string, any, string, number]) => l[0] === 'Sick Time Off')?.[1].virtual_remaining_leaves || "0"} days</span>
+              Sick: <span className="font-medium">
+                {leaveTypes?.find((l: any) => l?.name?.toLowerCase()?.includes('sick'))?.virtual_remaining_leaves || "0"} days
+              </span>
             </span>
           </div>
           <div className="flex items-center">
             <span className="material-icons-round text-purple-500 mr-1 text-sm">stars</span>
             <span className="text-xs text-slate">
-              Special: <span className="font-medium">{leaveBalances?.filter((l: [string, any, string, number]) => 
-                l[0] !== 'Cuti Tahunan' && 
-                l[0] !== 'Sick Time Off' && 
-                l[0] !== 'Unpaid'
-              ).reduce((acc: number, curr: [string, { virtual_remaining_leaves: string }]) => 
-                acc + parseFloat(curr[1].virtual_remaining_leaves || "0"), 0)} days</span>
+              Special: <span className="font-medium">
+                {leaveTypes?.filter((l: any) => 
+                  l?.name && 
+                  !l.name.toLowerCase().includes('tahunan') && 
+                  !l.name.toLowerCase().includes('sick') && 
+                  !l.name.toLowerCase().includes('unpaid')
+                ).reduce((acc: number, curr: any) => 
+                  acc + parseFloat(curr?.virtual_remaining_leaves || "0"), 0)} days
+              </span>
             </span>
           </div>
         </div>
@@ -458,14 +466,14 @@ export default function Leave() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {realLeaveTypes.map((type: [string, any, string, number]) => (
+                        {realLeaveTypes.map((type: any) => (
                           <SelectItem 
-                            key={type[3]} 
-                            value={type[3].toString()}
+                            key={type.id} 
+                            value={type.id.toString()}
                           >
-                            {type[0]} {parseFloat(type[1].virtual_remaining_leaves) > 0 ? 
-                              `(${type[1].virtual_remaining_leaves} days left)` : 
-                              `(${type[1].max_leaves} days allocation)`}
+                            {type.name} {parseFloat(type.virtual_remaining_leaves) > 0 ? 
+                              `(${type.virtual_remaining_leaves} days left)` : 
+                              `(${type.max_leaves} days allocation)`}
                           </SelectItem>
                         ))}
                       </SelectContent>

@@ -1497,3 +1497,23 @@ export function useAllCalendarEvents(limit = 30, filter = "today") {
     enabled: odooClient.isAuthenticated(),
   });
 }
+
+export function useLeaveType() {
+  return useQuery({
+    queryKey: ["leaves", "types"],
+    queryFn: async () => {
+      const data = await odooClient.searchRead({
+        model: "hr.leave.type",
+        domain: [], // Remove the filter to get all leave types
+        fields: [
+          "name",
+          "virtual_remaining_leaves",
+          "max_leaves",
+          "leaves_taken",
+        ],
+      });
+      return data;
+    },
+    enabled: odooClient.isAuthenticated(),
+  });
+}
