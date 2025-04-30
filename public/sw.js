@@ -1,15 +1,8 @@
 // Service Worker for Arkana ESS PWA
 const CACHE_NAME = 'arkana-ess-v1';
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/app-icon.svg',
-  '/pwa-192x192.png',
-  '/pwa-512x512.png',
-  '/safari-pinned-tab.svg',
-  '/manifest.json',
-  'https://fonts.googleapis.com/icon?family=Material+Icons+Round'
-];
+
+// This will be replaced by the actual manifest during build
+const ASSETS_TO_CACHE = self.__WB_MANIFEST;
 
 // Installation event: cache assets
 self.addEventListener('install', (event) => {

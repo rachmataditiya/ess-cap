@@ -38,7 +38,7 @@ export default defineConfig({
             purpose: 'maskable'
           },
           {
-            src: 'icons/app-icon.svg',
+            src: 'app-icon.svg',
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any'
@@ -55,14 +55,18 @@ export default defineConfig({
       },
       workbox: {
         cleanupOutdatedCaches: true,
-        sourcemap: true
+        sourcemap: true,
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}']
       },
       devOptions: {
         enabled: true
       },
       strategies: 'injectManifest',
-      srcDir: 'src',
-      filename: 'sw.js'
+      srcDir: 'public',
+      filename: 'sw.js',
+      injectManifest: {
+        injectionPoint: 'self.__WB_MANIFEST'
+      }
     })
   ],
   preview: {
@@ -79,6 +83,24 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'vendor';
+            }
+            if (id.includes('@ionic')) {
+              return 'ui';
+            }
+            if (id.includes('html2canvas') || id.includes('dompurify')) {
+              return 'utils';
+            }
+            return 'vendor';
+          }
+        }
+      }
+    }
   },
   server: {
     port: 3000,
