@@ -26,6 +26,8 @@ import {
   ReceiptIcon,
   Clock4Icon,
   UsersIcon,
+  AlertCircleIcon,
+  BellIcon,
 } from "lucide-react";
 
 export default function Dashboard() {
@@ -334,27 +336,29 @@ export default function Dashboard() {
           </div>
         ) : announcements && announcements.length > 0 ? (
           announcements.slice(0, 2).map((news, index) => (
-            <NeumorphicCard key={index} className="p-4 mb-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h4 className="text-navy font-medium">
-                    {news.subject || "Announcement"}
-                  </h4>
-                  <p className="text-xs text-slate-light mt-1">
-                    Posted {new Date(news.date).toLocaleDateString()}
-                  </p>
+            <Link key={index} to="/announcements">
+              <NeumorphicCard className="p-4 mb-4 cursor-pointer hover:shadow-lg transition-shadow">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="text-navy font-medium">
+                      {news.subject || "Announcement"}
+                    </h4>
+                    <p className="text-xs text-slate-light mt-1">
+                      Posted {new Date(news.date).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="bg-teal/10 text-teal text-xs px-2 py-1 rounded-full font-medium">
+                    Announcement
+                  </div>
                 </div>
-                <div className="bg-teal/10 text-teal text-xs px-2 py-1 rounded-full font-medium">
-                  Announcement
-                </div>
-              </div>
-              <div
-                className="text-slate text-sm mt-3 line-clamp-2"
-                dangerouslySetInnerHTML={{
-                  __html: news.body || "No content available",
-                }}
-              ></div>
-            </NeumorphicCard>
+                <div
+                  className="text-slate text-sm mt-3 line-clamp-2"
+                  dangerouslySetInnerHTML={{
+                    __html: news.body || "No content available",
+                  }}
+                ></div>
+              </NeumorphicCard>
+            </Link>
           ))
         ) : (
           <NeumorphicCard className="p-4 mb-4">

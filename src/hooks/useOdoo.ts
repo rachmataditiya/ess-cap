@@ -777,71 +777,71 @@ export function useCompanyAnnouncements(limit = 5) {
   return useQuery({
     queryKey: ["announcements", limit],
     queryFn: async () => {
-      // Pertama, cari ID channel pengumuman
-      const channels = await odooClient.searchRead({
-        model: "mail.channel",
-        domain: [
-          ["name", "like", "Pengumuman"]
-        ],
-        fields: ["id", "name"],
-        limit: 1
-      });
-      
-      const channelId = channels && channels.length > 0 ? channels[0].id : false;
-      
-      // Jika channel ditemukan, cari pesan di channel tersebut
-      if (channelId) {
-        const announcements = await odooClient.searchRead({
-          model: "mail.message",
+      try {
+        // Cari channel pengumuman
+        const channels = await odooClient.searchRead({
+          model: "mail.channel",
           domain: [
-            ["model", "=", "mail.channel"],
-            ["res_id", "=", channelId],
-            ["message_type", "in", ["notification", "comment"]]
+            ["name", "like", "Pengumuman"]
           ],
-          fields: ["body", "date", "author_id", "tracking_value_ids", "subtype_id"],
-          limit,
-          order: "date desc",
+          fields: ["id"],
+          limit: 1
         });
         
-        // Ubah struktur data untuk menyesuaikan dengan template yang ada
-        // Karena tidak ada subject, kita gunakan nama author + tanggal sebagai "subject"
-        return announcements.map((announcement: any) => {
-          const authorName = announcement.author_id ? announcement.author_id[1] : "System";
-          const messageDate = new Date(announcement.date).toLocaleDateString();
+        if (channels && channels.length > 0) {
+          const channelId = channels[0].id;
           
-          // Buat subject dari kombinasi author dan tanggal
-          return {
-            ...announcement,
-            subject: `${authorName} - ${messageDate}`
-          };
-        });
-      }
-      
-      // Fallback ke pencarian pengumuman di seluruh channel jika channel pengumuman tidak ditemukan
-      const announcements = await odooClient.searchRead({
-        model: "mail.message",
-        domain: [
-          ["model", "=", "mail.channel"],
-          ["message_type", "=", "notification"]
-        ],
-        fields: ["body", "date", "author_id", "tracking_value_ids", "subtype_id"],
-        limit,
-        order: "date desc",
-      });
-
-      // Ubah struktur data untuk menyesuaikan dengan template yang ada
-      return announcements.map((announcement: any) => {
-        const authorName = announcement.author_id ? announcement.author_id[1] : "System";
-        const messageDate = new Date(announcement.date).toLocaleDateString();
+          // Fetch channel preview dengan last_message
+          const channelPreview = await odooClient.call({
+            model: "mail.channel",
+            method: "channel_fetch_preview",
+            args: [[channelId]]
+          });
+          
+          if (channelPreview && channelPreview.length > 0) {
+            const channel = channelPreview[0];
+            
+            // Fetch 5 messages terakhir dari channel
+            const messages = await odooClient.searchRead({
+              model: "mail.message",
+              domain: [
+                ["model", "=", "mail.channel"],
+                ["res_id", "=", channelId],
+                ["body", "!=", ""],
+                ["message_type","!=","notification"]
+              ],
+              fields: [
+                "id",
+                "body",
+                "date",
+                "author_id",
+                "message_type",
+                "subtype_id",
+                "subject"
+              ],
+              limit: 5,
+              order: "date desc"
+            });
+            
+            return messages.map(message => ({
+              id: message.id,
+              subject: message.subject || "Announcement",
+              body: message.body,
+              date: message.date,
+              author_id: message.author_id,
+              message_type: message.message_type,
+              subtype_id: message.subtype_id
+            }));
+          }
+        }
         
-        // Buat subject dari kombinasi author dan tanggal
-        return {
-          ...announcement,
-          subject: `${authorName} - ${messageDate}`
-        };
-      });
+        return [];
+      } catch (error) {
+        console.error("Error fetching announcements:", error);
+        return [];
+      }
     },
-    enabled: odooClient.isAuthenticated(),
+    enabled: odooClient.isAuthenticated()
   });
 }
 
