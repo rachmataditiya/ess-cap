@@ -37,14 +37,6 @@ export default defineConfig({
             type: 'image/png',
             purpose: 'maskable'
           }
-        ],
-        screenshots: [
-          {
-            src: 'screenshot-dashboard.png',
-            sizes: '1280x720',
-            type: 'image/png',
-            label: 'Dashboard Screenshot'
-          }
         ]
       },
       workbox: {
@@ -59,7 +51,7 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -73,7 +65,7 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -88,7 +80,7 @@ export default defineConfig({
         navigateFallback: 'index.html'
       },
       strategies: 'generateSW',
-      srcDir: 'public',
+      srcDir: 'src',
       filename: 'sw.js'
     })
   ],
