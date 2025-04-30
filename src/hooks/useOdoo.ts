@@ -1402,33 +1402,98 @@ export interface ResourceEvent {
   event_type: string;
 }
 
-export function useResources() {
-  const { data: events, isLoading } = useQuery({
-    queryKey: ["resources", "events"],
+export function useAllCalendarEvents(limit = 30, filter = "today") {
+  return useQuery({
+    queryKey: ["calendar", "all-events", limit, filter],
     queryFn: async () => {
-      const events = await odooClient.searchRead({
-        model: "hr.leave",
-        domain: [
-          ["state", "in", ["validate", "validate1"]],
-          ["date_from", "<=", format(new Date(), "yyyy-MM-dd")],
-          ["date_to", ">=", format(new Date(), "yyyy-MM-dd")],
-        ],
-        fields: ["name", "date_from", "date_to", "employee_id", "holiday_status_id"],
-      });
+      if (!odooClient.isAuthenticated()) return [];
 
-      return events.map((event: any) => ({
-        id: event.id,
-        name: event.name,
-        start_date: event.date_from,
-        end_date: event.date_to,
-        employee_id: event.employee_id,
-        event_type: "leave",
-      }));
+      try {
+        // Base domain to exclude birthday events
+        const baseDomain = [
+          ["name", "not like", "Birthday"],
+          ["name", "not like", "birthday"],
+        ];
+
+        // Get current date in UTC+7
+        const now = new Date();
+        const nowUTC7 = new Date(now.getTime() + (7 * 60 * 60 * 1000));
+        const todayStr = nowUTC7.toISOString().split('T')[0];
+
+        // Add date filter based on selected period
+        if (filter === "today") {
+          baseDomain.push(["start", ">=", todayStr]);
+          baseDomain.push(["start", "<=", todayStr]);
+        } else if (filter === "week") {
+          // Get start of week (Monday)
+          const dayOfWeek = nowUTC7.getUTCDay();
+          const daysUntilMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+          const startOfWeek = new Date(nowUTC7);
+          startOfWeek.setUTCDate(startOfWeek.getUTCDate() - daysUntilMonday);
+          const startOfWeekStr = startOfWeek.toISOString().split('T')[0];
+
+          // Get end of week (Friday)
+          const endOfWeek = new Date(startOfWeek);
+          endOfWeek.setUTCDate(startOfWeek.getUTCDate() + 4);
+          const endOfWeekStr = endOfWeek.toISOString().split('T')[0];
+
+          baseDomain.push(["start", ">=", startOfWeekStr]);
+          baseDomain.push(["start", "<=", endOfWeekStr]);
+        } else if (filter === "month") {
+          // Get start of month
+          const startOfMonth = new Date(nowUTC7);
+          startOfMonth.setUTCDate(1);
+          const startOfMonthStr = startOfMonth.toISOString().split('T')[0];
+
+          // Get end of month
+          const endOfMonth = new Date(nowUTC7);
+          endOfMonth.setUTCMonth(endOfMonth.getUTCMonth() + 1);
+          endOfMonth.setUTCDate(0);
+          const endOfMonthStr = endOfMonth.toISOString().split('T')[0];
+
+          baseDomain.push(["start", ">=", startOfMonthStr]);
+          baseDomain.push(["start", "<=", endOfMonthStr]);
+        }
+
+        const events = await odooClient.searchRead({
+          model: "calendar.event",
+          domain: baseDomain,
+          fields: [
+            "name",
+            "start",
+            "stop",
+            "allday",
+            "location",
+            "description",
+            "user_id",
+            "partner_ids",
+          ],
+          limit: limit,
+          order: "start asc",
+        });
+
+        // Get employee names for each event
+        const eventsWithEmployeeNames = await Promise.all(
+          events.map(async (event) => {
+            const employee = await odooClient.searchRead({
+              model: "hr.employee",
+              domain: [["user_id", "=", event.user_id[0]]],
+              fields: ["name"],
+            });
+
+            return {
+              ...event,
+              employee_name: employee && employee.length > 0 ? employee[0].name : "Unknown",
+            };
+          })
+        );
+
+        return eventsWithEmployeeNames;
+      } catch (error) {
+        console.error("Error fetching all calendar events:", error);
+        return [];
+      }
     },
+    enabled: odooClient.isAuthenticated(),
   });
-
-  return {
-    events,
-    isLoading,
-  };
 }
