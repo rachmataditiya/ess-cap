@@ -7,7 +7,8 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https',
     iosScheme: 'https',
-    cleartext: true
+    cleartext: true,
+    allowNavigation: ['*']
   },
   plugins: {
     SplashScreen: {
@@ -27,7 +28,11 @@ const config: CapacitorConfig = {
       backgroundColor: "#ffffff",
       style: "DARK",
       overlaysWebView: false,
-      show: true
+      show: true,
+      overlay: false
+    },
+    AndroidEdgeToEdgeSupport: {
+      enable: true
     }
   }
 };

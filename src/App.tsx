@@ -112,7 +112,7 @@ function Router() {
         />
       )}
       
-      <main className="pt-16 pb-20 min-h-[calc(100vh-5rem)]">
+      <main className="pt-[calc(3.5rem+env(safe-area-inset-top))] pb-20 min-h-[calc(100vh-5rem)] safe-padding">
         <Switch>
           <Route path="/auth">
             {isAuthenticated ? <Redirect to="/" /> : <AuthPage />}
@@ -158,7 +158,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="app-container bg-soft-gradient min-h-screen">
+        <div className="app-container bg-soft-gradient safe-height">
           <Toaster />
           <Router />
         </div>
